@@ -1,10 +1,9 @@
 from dataclasses import dataclass
 from typing import Any
 
-from pytorch_lightning.plugins import DDPPlugin
-
 from minigate.configs import get_module_import_path
 from minigate.configs.trainer.base import BaseTrainer
+from pytorch_lightning.plugins import DDPPlugin
 
 
 @dataclass
@@ -16,6 +15,7 @@ class DDPPlugin:
 @dataclass
 class DDPTrainer(BaseTrainer):
     accelerator: str = "gpu"
+    gpus: int = 1
     strategy: Any = None
     replace_sampler_ddp: bool = True
     sync_batchnorm: bool = True
@@ -27,4 +27,5 @@ class DDPTrainer(BaseTrainer):
 class DPTrainer(BaseTrainer):
     accelerator: str = "gpu"
     strategy: str = "dp"
+    gpus: int = 1
     auto_scale_batch_size: bool = False
