@@ -1,8 +1,9 @@
 FROM gcr.io/deeplearning-platform-release/pytorch-cpu:latest
 
-SHELL ["/bin/bash", "-c"]
-
+RUN curl -f https://packages.cloud.google.com/apt/doc/apt-key.gpg \
+    | apt-key add -
 RUN apt-get update
+
 RUN conda init bash
 RUN conda create -n gate python=3.10 -y
 RUN echo "conda activate gate" >> ~/.bashrc
@@ -11,18 +12,11 @@ RUN git clone https://github.com/srihari-humbarwadi/miniGATE
 
 SHELL ["conda", "run", "-n", "gate", "/bin/bash", "-c"]
 
-RUN cd GATE \
-    && conda install -c conda-forge mamba -y \
-    && mamba install pytorch torchvision torchaudio -c pytorch -c conda-forge \
-    && bash install_dependencies.sh
+RUN conda install -c conda-forge mamba \
+    && mamba install pytorch torchvision torchaudio cpuonly -c pytorch -c conda-forge
+    
+RUN cd miniGATE && bash install_dependencies.sh
 
-RUN apt install fish -y \
-    && curl -sS https://starship.rs/install.sh | sh -y \
-    && starship init fish | source
+RUN apt-get install libgl1-mesa-glx ffmpeg libsm6 libxext6 -y
 
-RUN apt install libgl1-mesa-glx -y
-RUN apt-get install 'ffmpeg'\
-    'libsm6'\
-    'libxext6'  -y
-
-CMD ["bin/bash"]
+ENTRYPOINT ["/bin/bash"]
