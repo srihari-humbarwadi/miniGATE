@@ -1,0 +1,31 @@
+version: '3.6'
+
+services:
+  minigate:
+    build:
+      context: $PWD
+      dockerfile: $PWD/Dockerfile.cpu
+    image: minigate:latest
+    container_name: minigate
+    hostname: minigate
+    restart: unless-stopped
+    ipc: "none"
+    stdin_open: true
+    security_opt:
+      - no-new-privileges
+    healthcheck:
+      test: [ "CMD-SHELL", "exit", "0" ]
+      interval: 5m
+    privileged: true
+    environment:
+      WANDB_API_KEY: ${WANDB_API_KEY}
+      WANDB_ENTITY: ${WANDB_ENTITY}
+      WANDB_PROJECT: ${WANDB_PROJECT}
+      HOME: ${HOME}
+      EXPERIMENTS_DIR: ${EXPERIMENTS_DIR}
+      EXPERIMENT_DIR: ${EXPERIMENT_DIR}
+      DATASET_DIR: ${DATASET_DIR}
+      MODEL_DIR: ${MODEL_DIR}
+    volumes:
+      - ${PWD}:/app/miniGATE_src:rw
+      
